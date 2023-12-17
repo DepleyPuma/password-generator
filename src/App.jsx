@@ -4,11 +4,13 @@ import { Box } from './components/Box/Box';
 import { Button } from './components/Button/Button';
 import { CheckBox } from './components/CheckBox/CheckBox';
 import { PasswordBox } from './components/PasswordBox/PasswordBox';
+import { ErrorMessage } from './components/ErrorMessage/ErrorMessage';
 
 function App() {
 	const [password, setPassword] = useState('');
 	const [hiddenPassword, setHiddenPassword] = useState('');
 	const [passwordLength, setPasswordLength] = useState(8);
+	const [error, setError] = useState(false);
 	const [passwordIsShown, setPasswordIsShown] = useState(false);
 	const [specialSyntax, setSpecialSyntax] = useState(false);
 	const [number, setNumber] = useState(false);
@@ -22,8 +24,10 @@ function App() {
 
 	const checkInput = () => {
 		if (passwordLength < 3 || passwordLength > 20) {
-			alert('Hasło musi być w przedziale od 3 do 20 znaków');
+			setError(true);
+			// alert('Hasło musi być w przedziale od 3 do 20 znaków');
 		} else {
+			setError(false);
 			handleGeneratePassword();
 		}
 	};
@@ -89,6 +93,8 @@ function App() {
 					value={passwordLength}
 					onChange={e => setPasswordLength(parseInt(e.target.value, 10))}
 				/>
+
+				{error && <ErrorMessage />}
 
 				{checkBoxes.map((checkbox, index) => (
 					<CheckBox key={index} {...checkbox} />
