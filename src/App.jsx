@@ -25,7 +25,6 @@ function App() {
 	const checkInput = () => {
 		if (passwordLength < 3 || passwordLength > 20) {
 			setError(true);
-			// alert('Hasło musi być w przedziale od 3 do 20 znaków');
 		} else {
 			setError(false);
 			handleGeneratePassword();
