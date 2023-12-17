@@ -15,10 +15,17 @@ function App() {
 	const [bigLetters, setBigLetters] = useState(false);
 	const [passwordBoxIsShown, setPasswordBoxIsShown] = useState(false);
 
-	// let hiddePassword = '';
-
 	const coppyPassword = () => {
 		navigator.clipboard.writeText(password);
+		alert('Hasło zostało pomyślnie skopiowane');
+	};
+
+	const checkInput = () => {
+		if (passwordLength < 3 || passwordLength > 20) {
+			alert('Hasło musi być w przedziale od 3 do 20 znaków');
+		} else {
+			handleGeneratePassword();
+		}
 	};
 
 	const handleSpecialSyntaxChange = () => {
@@ -35,6 +42,7 @@ function App() {
 
 	const handleGeneratePassword = () => {
 		setPassword('');
+		setHiddenPassword('');
 		let scope = 'abcdefghijklmnopqrstuvwxyz';
 		const bigLetter = 'ABCDEFGHIJKLMNOUPRSTWYXZ';
 		const special = '!@#$%^&*()?';
@@ -60,6 +68,12 @@ function App() {
 		setPasswordBoxIsShown(true);
 	};
 
+	const checkBoxes = [
+		{ name: 'Znaki specialne', htmlFor: 'specialSyntax', onChange: handleSpecialSyntaxChange, checked: specialSyntax },
+		{ name: 'Numery', htmlFor: 'number', onChange: handleNumberChange, checked: number },
+		{ name: 'Wielkie litery', htmlFor: 'bigLetters', onChange: handleBigLettersChange, checked: bigLetters },
+	];
+
 	return (
 		<>
 			<Box>
@@ -75,20 +89,12 @@ function App() {
 					value={passwordLength}
 					onChange={e => setPasswordLength(parseInt(e.target.value, 10))}
 				/>
-				<CheckBox
-					checked={specialSyntax}
-					onChange={handleSpecialSyntaxChange}
-					htmlFor={'specialSyntax'}
-					name={'Znaki specialne'}
-				/>
-				<CheckBox checked={number} onChange={handleNumberChange} htmlFor={'number'} name={'Numery'} />
-				<CheckBox
-					checked={bigLetters}
-					onChange={handleBigLettersChange}
-					htmlFor={'bigLetters'}
-					name={'Wielkie litery'}
-				/>
-				<Button onClick={handleGeneratePassword}>Generuj hasło</Button>
+
+				{checkBoxes.map((checkbox, index) => (
+					<CheckBox key={index} {...checkbox} />
+				))}
+
+				<Button onClick={checkInput}>Generuj hasło</Button>
 				{passwordBoxIsShown && (
 					<PasswordBox
 						password={passwordIsShown ? password : hiddenPassword}
