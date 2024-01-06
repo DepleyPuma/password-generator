@@ -1,4 +1,4 @@
 import styles from './Box.module.css';
-export function Box({ children }) {
+export function Container({ children }) {
 	return <div className={styles.box}>{children}</div>;
 }

@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import './App.css';
-import { Box } from './components/Box/Box';
+import { Container } from './components/Box/Box';
 import { Button } from './components/Button/Button';
 import { CheckBox } from './components/CheckBox/CheckBox';
 import { PasswordBox } from './components/PasswordBox/PasswordBox';
 import { ErrorMessage } from './components/ErrorMessage/ErrorMessage';
+import { Input } from './components/Input/Input';
 
 function App() {
 	const [password, setPassword] = useState('');
@@ -16,6 +16,7 @@ function App() {
 	const [number, setNumber] = useState(false);
 	const [bigLetters, setBigLetters] = useState(false);
 	const [passwordBoxIsShown, setPasswordBoxIsShown] = useState(false);
+	const [errorMessage, setErrorMessage] = useState('');
 
 	const coppyPassword = () => {
 		navigator.clipboard.writeText(password);
@@ -23,8 +24,15 @@ function App() {
 	};
 
 	const checkInput = () => {
-		if (passwordLength < 3 || passwordLength > 20) {
+		// || passwordLength > 20
+		if (isNaN(passwordLength)) {
+			setPasswordBoxIsShown(false);
 			setError(true);
+			setErrorMessage('Pole jest puste!');
+		} else if (passwordLength < 3) {
+			setPasswordBoxIsShown(false);
+			setError(true);
+			setErrorMessage('Hasło jest za krótkie. Musi zawierać minumum 3 znaki');
 		} else {
 			setError(false);
 			handleGeneratePassword();
@@ -78,37 +86,30 @@ function App() {
 	];
 
 	return (
-		<>
-			<Box>
-				<label htmlFor='passwordLength' style={{ fontSize: 24 }}>
-					Długość hasła:
-				</label>
-				<input
-					type='number'
-					min={3}
-					max={20}
-					id='passwordLength'
-					style={{ padding: 10, width: '65%' }}
-					value={passwordLength}
-					onChange={e => setPasswordLength(parseInt(e.target.value, 10))}
+		<Container>
+			<label htmlFor='passwordLength' style={{ fontSize: 24 }}>
+				Długość hasła:
+			</label>
+			<Input 
+				passwordLength={passwordLength} 
+				onChange={e => setPasswordLength(parseInt(e.target.value, 10))} 
+			/>
+
+			{error && <ErrorMessage message={errorMessage} />}
+
+			{checkBoxes.map((checkbox, index) => (
+				<CheckBox key={index} {...checkbox} />
+			))}
+
+			<Button onClick={checkInput}>Generuj hasło</Button>
+			{passwordBoxIsShown && (
+				<PasswordBox
+					password={passwordIsShown ? password : hiddenPassword}
+					onHandleShowPass={() => setPasswordIsShown(true)}
+					onHandleCoppyPass={coppyPassword}
 				/>
-
-				{error && <ErrorMessage />}
-
-				{checkBoxes.map((checkbox, index) => (
-					<CheckBox key={index} {...checkbox} />
-				))}
-
-				<Button onClick={checkInput}>Generuj hasło</Button>
-				{passwordBoxIsShown && (
-					<PasswordBox
-						password={passwordIsShown ? password : hiddenPassword}
-						onHandleShowPass={() => setPasswordIsShown(true)}
-						onHandleCoppyPass={coppyPassword}
-					/>
-				)}
-			</Box>
-		</>
+			)}
+		</Container>
 	);
 }
 
